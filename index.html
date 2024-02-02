@@ -1,0 +1,48 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rövarspråk Encryptor</title>
+</head>
+<body>
+    <h1>Rövarspråk Encryptor</h1>
+    <form id="encryptForm">
+        <label for='inputText'>Enter text to encrypt:</label>
+        <input type='text' id='inputText' name='inputText' required>
+        <button type='submit'>Encrypt</button>
+    </form>
+
+    <form id="decryptForm">
+        <label for='encryptedText'>Enter text to decrypt:</label>
+        <input type='text' id='encryptedText' name='encryptedText' required>
+        <button type='submit'>Decrypt</button>
+    </form>
+
+    <!-- Resultatdiv -->
+    <div id="resultDiv"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var encryptForm = document.getElementById("encryptForm");
+            var decryptForm = document.getElementById("decryptForm");
+            var resultDiv = document.getElementById("resultDiv");
+
+            encryptForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                var inputText = document.getElementById("inputText").value;
+                var encryptedText = "Encrypted Text: " + inputText;
+                resultDiv.innerHTML = "<p>" + encryptedText + "</p>";
+            });
+
+            decryptForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                var encryptedText = document.getElementById("encryptedText").value;
+                var decryptedText = "Decrypted Text: " + encryptedText;
+                resultDiv.innerHTML = "<p>" + decryptedText + "</p>";
+            });
+        });
+    </script>
+</body>
+</html>
