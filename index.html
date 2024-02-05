@@ -5,42 +5,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rövarspråk Encryptor</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* 100% av fönstrets höjd */
+            margin: 0;
+        }
+
+        #formContainer {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .box {
+            width: 300px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-right: 20px;
+            box-sizing: border-box;
+        }
+
+        #encryptForm,
+        #resultDiv {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 8px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        #resultText {
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
 <body>
     <h1>Rövarspråk Encryptor</h1>
-    <form id="encryptForm">
-        <label for='inputText'>Enter text to encrypt:</label>
-        <input type='text' id='inputText' name='inputText' required>
-        <button type='submit'>Encrypt</button>
-    </form>
+    
+    <div id="formContainer">
+        <!-- Formulärdiv -->
+        <div id="encryptForm" class="box">
+            <form>
+                <label for='inputText'>Enter text to encrypt:</label>
+                <input type='text' id='inputText' name='inputText' required>
+                <button type='submit'>Encrypt</button>
+            </form>
+        </div>
 
-    <form id="decryptForm">
-        <label for='encryptedText'>Enter text to decrypt:</label>
-        <input type='text' id='encryptedText' name='encryptedText' required>
-        <button type='submit'>Decrypt</button>
-    </form>
-
-    <!-- Resultatdiv -->
-    <div id="resultDiv"></div>
+        <!-- Resultatdiv -->
+        <div id="resultDiv" class="box">
+            <h2>Resultat:</h2>
+            <p id='resultText'></p>
+            <button id='decryptButton'>Decrypt</button>
+        </div>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var encryptForm = document.getElementById("encryptForm");
-            var decryptForm = document.getElementById("decryptForm");
-            var resultDiv = document.getElementById("resultDiv");
+            var encryptForm = document.querySelector("#encryptForm form");
+            var resultText = document.getElementById("resultText");
+            var decryptButton = document.getElementById("decryptButton");
 
             encryptForm.addEventListener("submit", function (event) {
                 event.preventDefault();
+                
                 var inputText = document.getElementById("inputText").value;
-                var encryptedText = "Encrypted Text: " + inputText;
-                resultDiv.innerHTML = "<p>" + encryptedText + "</p>";
+
+                fetch("/encrypt", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'inputText=' + encodeURIComponent(inputText),
+                })
+                .then(response => response.text())
+                .then(data => {
+                    var cleanResult = data.replace("inonpoputotTotexoxtot=", "");
+                    resultText.textContent = cleanResult;
+                    decryptButton.style.display = "inline";
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
             });
 
-            decryptForm.addEventListener("submit", function (event) {
-                event.preventDefault();
-                var encryptedText = document.getElementById("encryptedText").value;
-                var decryptedText = "Decrypted Text: " + encryptedText;
-                resultDiv.innerHTML = "<p>" + decryptedText + "</p>";
+            decryptButton.addEventListener("click", function () {
+                var decryptedText = resultText.textContent;
+                fetch("/decrypt", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'inputText=' + encodeURIComponent(decryptedText),
+                })
+                .then(response => response.text())
+                .then(data => {
+                    resultText.textContent = data;
+                    decryptButton.style.display = "none";
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
             });
         });
     </script>
