@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.IO;
 
 class Program
 {
@@ -40,56 +38,54 @@ class Program
         string FromRovarsprak(string text)
         {
             var result = new System.Text.StringBuilder();
-            for (int i = 0; i < text.Length; i++)
+            int i = 0;
+            while (i < text.Length)
             {
-                result.Append(text[i]);
-                if (i < text.Length - 2 && text[i] == 'o' && char.ToLower(text[i + 1]) == text[i + 2])
+                
+                if (char.IsLetter(text[i]) && i + 2 < text.Length && text[i + 1] == 'o' && char.ToLower(text[i]) == char.ToLower(text[i + 2]))
                 {
-                    i += 2;
+                    
+                    result.Append(text[i]);
+                    
+                    i += 3;
+                }
+                else
+                {
+                   
+                    result.Append(text[i]);
+                    i++;
                 }
             }
             return result.ToString();
         }
 
-        app.MapGet("/", async (HttpContext context) =>
+        // Endpoint för att kryptera texten
+        app.MapGet("/encrypt", async (HttpContext context) =>
         {
-            var htmlFilePath = Path.Combine(Directory.GetCurrentDirectory(), "index.html");
-            var htmlContent = await File.ReadAllTextAsync(htmlFilePath);
-
-            context.Response.ContentType = "text/html";
-            await context.Response.WriteAsync(htmlContent);
-        });
-
-        app.MapPost("/encrypt", async (HttpContext context) =>
-        {
-            using var reader = new StreamReader(context.Request.Body);
-            var requestBody = await reader.ReadToEndAsync();
-            var encryptedText = ToRovarsprak(requestBody);
+            string textToEncrypt = context.Request.Query["text"];
+            string encryptedText = ToRovarsprak(textToEncrypt);
 
             context.Response.ContentType = "text/plain";
             await context.Response.WriteAsync(encryptedText);
         });
 
-        app.MapPost("/decrypt", async (HttpContext context) =>
+        // Endpoint för att dekryptera texten
+        app.MapGet("/decrypt", async (HttpContext context) =>
         {
-            using var reader = new StreamReader(context.Request.Body);
-            var requestBody = await reader.ReadToEndAsync();
-            var decryptedText = FromRovarsprak(requestBody);
+            string textToDecrypt = context.Request.Query["text"];
+            string decryptedText = FromRovarsprak(textToDecrypt);
 
             context.Response.ContentType = "text/plain";
             await context.Response.WriteAsync(decryptedText);
         });
 
-        app.MapGet("/hello", async (HttpContext context) =>
+        app.MapGet("/", () =>
         {
-            context.Response.ContentType = "text/plain";
-            await context.Response.WriteAsync("Hello, World!");
-        });
-
-        app.MapGet("/goodbye", async (HttpContext context) =>
-        {
-            context.Response.ContentType = "text/plain";
-            await context.Response.WriteAsync("Goodbye, World!");
+            return "Welcome to the Rövarspråk Encrypter!\n"
+                + "\n"
+                + "How to use:\n"
+                + "URL/encrypt?text=[you'r text].\n"
+                + "URL/decrypt?text=[you'r text].\n";
         });
 
         app.Run();
