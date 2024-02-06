@@ -49,14 +49,14 @@
             padding: 8px 16px;
             cursor: pointer;
             margin-right: 5px;
-            background-color: #4CAF50;
+            background-color: #2bb3f7; /* Mörkblå färg */
             color: white;
             border: none;
             border-radius: 5px;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #80d4ff; /* Ljusblå färg vid hover */
         }
 
         #resultDiv {
@@ -143,6 +143,7 @@
                 for (var i = 0; i < encryptedText.length; i++) {
                     if (encryptedText[i] !== 'o' && encryptedText[i] !== 'O') {
                         decryptedText += encryptedText[i];
+                        i += 2; // Hoppa över två tecken för att hitta nästa tecken i krypterad text
                     }
                 }
                 translatedText.value = decryptedText; // Fyller i dekrypterad text i det andra textfältet
