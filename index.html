@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,83 +9,114 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column; /* Centrerar både vertikalt och horisontellt */
             height: 100vh; /* 100% av fönstrets höjd */
             margin: 0;
         }
 
-        #formContainer {
+        .container {
             display: flex;
-            align-items: flex-start;
+            flex-direction: column;
+            align-items: center;
         }
 
         .box {
             width: 300px;
             border: 1px solid #ccc;
             padding: 10px;
-            margin-right: 20px;
+            margin-bottom: 20px;
             box-sizing: border-box;
-        }
-
-        #encryptForm,
-        #resultDiv {
-            display: flex;
-            flex-direction: column;
         }
 
         label {
             display: block;
             margin-bottom: 5px;
+            font-size: 14px; /* Samma storlek som resultattexten */
         }
 
-        input {
-            width: 100%;
+        input[type='text'],
+        input[type='text']:focus {
+            width: calc(100% - 20px);
             padding: 8px;
             box-sizing: border-box;
             margin-bottom: 10px;
+            border: 1px solid #dfe1e5;
+            border-radius: 5px;
+            outline: none;
         }
 
         button {
-            padding: 8px;
+            padding: 8px 16px;
             cursor: pointer;
             margin-right: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #resultDiv {
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
         }
 
         #resultText {
             font-size: 14px;
             white-space: pre-wrap;
+            margin-bottom: 10px;
+        }
+
+        #translatedText {
+            width: calc(100% - 20px);
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #dfe1e5;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        /* Ny stil för titel */
+        .title {
+            font-size: 24px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Rövarspråk Encryptor</h1>
-    
-    <div id="formContainer">
+    <!-- Centrerad titel -->
+    <h1 class="title">Rövarspråk Encryptor</h1>
+
+    <div class="container">
         <!-- Formulärdiv -->
-        <div id="encryptForm" class="box">
-            <form>
-                <label for='inputText'>Enter text to encrypt:</label>
-                <input type='text' id='inputText' name='inputText' required>
-                <button type='submit'>Encrypt</button>
-            </form>
+        <div class="box">
+            <label for='inputText' style="font-size: 14px;">Enter text to encrypt:</label>
+            <input type='text' id='inputText' name='inputText' required>
+            <button type='button' id='encryptButton'>Encrypt</button>
         </div>
 
         <!-- Resultatdiv -->
         <div id="resultDiv" class="box">
-            <h2>Resultat:</h2>
-            <p id='resultText'></p>
-            <button id='decryptButton'>Decrypt</button>
+            <label for="translatedText">Translated text:</label>
+            <input type="text" id="translatedText" readonly>
+            <button type="button" id="decryptButton">Decrypt</button>
         </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var encryptForm = document.querySelector("#encryptForm form");
-            var resultText = document.getElementById("resultText");
+            var encryptButton = document.getElementById("encryptButton");
+            var resultDiv = document.getElementById("resultDiv");
+            var translatedText = document.getElementById("translatedText");
             var decryptButton = document.getElementById("decryptButton");
 
-            encryptForm.addEventListener("submit", function (event) {
-                event.preventDefault();
-                
+            encryptButton.addEventListener("click", function () {
                 var inputText = document.getElementById("inputText").value;
 
                 fetch("/encrypt", {
@@ -99,8 +129,8 @@
                 .then(response => response.text())
                 .then(data => {
                     var cleanResult = data.replace("inonpoputotTotexoxtot=", "");
-                    resultText.textContent = cleanResult;
-                    decryptButton.style.display = "inline";
+                    translatedText.value = cleanResult; // Fyller i översättningen i det andra textfältet
+                    resultDiv.style.display = "block"; // Visar resultatdiven
                 })
                 .catch(error => {
                     console.error("Error:", error);
@@ -108,22 +138,14 @@
             });
 
             decryptButton.addEventListener("click", function () {
-                var decryptedText = resultText.textContent;
-                fetch("/decrypt", {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'inputText=' + encodeURIComponent(decryptedText),
-                })
-                .then(response => response.text())
-                .then(data => {
-                    resultText.textContent = data;
-                    decryptButton.style.display = "none";
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                });
+                var encryptedText = translatedText.value;
+                var decryptedText = '';
+                for (var i = 0; i < encryptedText.length; i++) {
+                    if (encryptedText[i] !== 'o' && encryptedText[i] !== 'O') {
+                        decryptedText += encryptedText[i];
+                    }
+                }
+                translatedText.value = decryptedText; // Fyller i dekrypterad text i det andra textfältet
             });
         });
     </script>
