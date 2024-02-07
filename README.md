@@ -1,6 +1,4 @@
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/AxelLofberg/api-uppgift/aws.yml)
-[GitHub commit activity](https://img.shields.io/github/commit-activity/t/AxelLofberg/api-uppgift)
-![action results](https://github.com/AxelLofberg/api-uppgift/actions/workflows/aws.yml/badge.svg) 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/AxelLofberg/api-uppgift/aws.yml) ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/AxelLofberg/api-uppgift) ![action results](https://github.com/AxelLofberg/api-uppgift/actions/workflows/aws.yml/badge.svg) 
 
 
 
