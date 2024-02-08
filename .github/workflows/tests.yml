@@ -24,7 +24,11 @@ jobs:
       run: dotnet restore MyProject.Tests/MyProject.Tests.csproj
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: |
+       cd MyProject.Tests  
+       dotnet build --configuration Release --no-restore
+
+
 
     - name: Test
       run: dotnet test MyProject.Tests/MyProject.Tests.csproj --configuration Release --no-build
