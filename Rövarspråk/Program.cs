@@ -82,8 +82,8 @@ public class Program
             return "Welcome to the Rövarspråk Encrypter!\n"
                 + "\n"
                 + "How to use:\n"
-                + "URL/encrypt?text=[you'r text].\n"
-                + "URL/decrypt?text=[you'r text].\n";
+                + " /encrypt?text=[you'r text].\n"
+                + " /decrypt?text=[you'r text].\n";
         });
 
         app.Run();
